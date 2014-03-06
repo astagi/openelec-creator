@@ -2,4 +2,12 @@ OpenELEC Creator
 ================
 OpenELEC SDCard Creator
 
-    $ sudo ./openelec-creator.py
+Install
+-------
+
+    $ sudo python setup.py install
+
+Run
+---
+
+    $ sudo openeleccreator
