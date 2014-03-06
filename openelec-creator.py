@@ -66,8 +66,14 @@ def unzip_image(zip_file, outpath):
   return os.path.join(outpath, img_name)
 
 def main():
-  images = get_images_list()
+  try:
+    images = get_images_list()
+  except requests.exceptions.ConnectionError:
+    print "Error fetching available images. Please check your connection and retry!"
+    exit(0)
+
   i = 0
+  print "\nAvailable OpenELEC images:"
   for image in images:
     i += 1
     print "%d\t%s\t%s\t%s" % (i, image['date'], image['name'], image['size'])
@@ -76,7 +82,11 @@ def main():
     image_index = int(input('\nSelect the image you want to flash: ')) - 1
   temp_dir = tempfile.gettempdir()
   img_zip = os.path.join(temp_dir, images[image_index]['name'])
-  download_file(images[image_index]['url'], img_zip)
+  try:
+    download_file(images[image_index]['url'], img_zip)
+  except requests.exceptions.ConnectionError:
+    print "\nError downloading requested image. Please check your connection and retry!"
+    exit(0)
   print "\nDownload completed!"
   print "Unzipping image... Please wait.."
   img_to_flash = unzip_image(img_zip, temp_dir)
@@ -85,6 +95,7 @@ def main():
   burner = Burner()
   devices = burner.list_devices()
   i = 0
+  print "\nAvailable devices:"
   for device in devices:
     i += 1
     print "%d\t%s" % (i, device['DeviceIdentifier'])
